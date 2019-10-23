@@ -112,16 +112,16 @@ function shift_left(a, shift) {
     return b;
 }
 
+const iter = 8;
+
 function key_generator(key) {
     if (key.length != 64) {
         throw 'Key length is not equal to 64!';
     }
     keys = [];
     key = permutation(key, IPC);
-    //console.log(hex(key));
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < iter; i++) {
         key = shift_left(key.slice(0, 28), LS[i]).concat(shift_left(key.slice(28, 56), LS[i]));
-        //console.log(hex(key));
         keys.push(permutation(key, PC));
     }
     return keys;
@@ -143,7 +143,7 @@ function DES(a, keys) {
     a = permutation(a, IP);
     var L = a.slice(0, 32);
     var R = a.slice(32, 64);
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < iter; i++) {
         var new_L = R;
         var new_R = XOR(L, F(R, keys[i]));
         L = new_L;

@@ -248,7 +248,11 @@
                 });
                 function checkDES(){
                     var x = document.getElementById("en_plaintext").value;
+                    x = x.replace(/[\r\n]|\ +/g,"");
+                    if (!check(x, '加密前明文')) return;
                     var y = document.getElementById("de_plaintext").value;
+                    if (!check(y, '解密后明文')) return;
+                    y = y.replace(/[\r\n]|\ +/g,"");
                     if (x == "")
                         alert("加密过程明文不能为空！");
                     else if (y == "")
