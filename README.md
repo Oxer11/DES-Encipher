@@ -4,7 +4,7 @@ DES Encipher for *The Principle of Information Security* 2019 Fall @ Fudan Unive
 
 ## Introduction
 
-This is the mid-term project for our Information Security course. In this project, I have implemented the DES method using *javascript*. You can visit [this website](<https://oxer11.github.io/DES/>) to use my encipher.
+This is the mid-term project for our Information Security course. In this project, I have implemented the DES method using *javascript*. You can visit [this website](<https://oxer11.github.io/DES/>) to use my encipher or you can open the main.html to run locally.
 
 ## Example
 As an illustrative instance, you can apply the DES algorithm on the following test case:
@@ -19,7 +19,7 @@ Then, you will get the answer:
 
 **ciphertext:** 0101010010101100110000000011110001001011000110000111010001001001
 
-**encrpted initial vector IV:**
+**encrypted initial vector IV:**
 1110000111000011101101011100111010101101001110110001000101100101
 
 After that, you can click the button '检验DES' to check the correctness of the DES algorithm.
