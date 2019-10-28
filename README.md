@@ -1,10 +1,10 @@
-# DES-Encipher
+# RSA-DES
 
-DES Encipher for *The Principle of Information Security* 2019 Fall @ Fudan University, by [**Zuobai Zhang**](<https://oxer11.github.io/>)
+RSA-DES Encipher for *Principles of Information Security* 2019 Fall @ Fudan University, by [**Zuobai Zhang**](<https://oxer11.github.io/>)
 
 ## Introduction
 
-This is the mid-term project for our Information Security course. In this project, I have implemented the DES method using *javascript*. You can visit [this website](<https://oxer11.github.io/DES/>) to use my encipher or you can open the main.html to run locally.
+This is the mid-term project for our Information Security course. In this project, I have implemented the DES method using *javascript*. You can visit [this website](<https://oxer11.github.io/DES/>) to use my encipher or you can open the DES.html to run locally. Furthermore, we implement the RSA algorithm to encrypt the key of DES and the new version is on [this website](<https://oxer11.github.io/RSA-DES/>) or open the RSA-DES.html to run locally.
 
 ## Example
 As an illustrative instance, you can apply the DES algorithm on the following test case:

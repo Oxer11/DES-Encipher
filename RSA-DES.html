@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>RSA-DES加密算法</title>
+
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="Bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="Bootstrap/js/jquery.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="Bootstrap/js/bootstrap.js"></script>
+    <script src="Bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap fileinput 插件 -->
+    <link href="Bootstrap/css/fileinput.min.css" rel="stylesheet">
+    <script src="Bootstrap/js/fileinput.min.js"></script>
+    <script src="Bootstrap/js/fileinput_locale_zh.js"></script>
+
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script src="DES.js"></script>
+    <script src="BigInt.js"></script>
+    <script src="RSA.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-10 column">
+            <div class="page-header">
+                <h1 align="center">RSA-DES加密算法</h1>
+            </div>
+
+            <h3><u>使用说明</u></h3>
+            <dl>
+                <ul>
+                    <li><p>
+                        <h4><dt>实现功能</dt></h4>
+                        <ul>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp使用RSA加密DES密钥</li></dd>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp使用DES加密数据文本</li></dd>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp依照CBC模式对分组明文加密</li></dd>
+                        </ul>
+                        </p></li>
+                    <li><p>
+                        <h4><dt>使用方法</dt></h4>
+                        <ul>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp可点击'生成密钥对'按钮，生成合法的RSA密钥</li></dd>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp点击'RSA加密'，可对密钥进行加密</li></dd>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp可通过选择文件导入或直接在文本框中输入明文</li></dd>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp输入64位密钥以及CBC模式中使用的初始向量IV</li></dd>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp点击‘DES加密’按钮可对明文与初始向量IV加密，点击‘下载密文文本’按钮可下载密文到本地</li></dd>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp解密操作同上</li></dd>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp可点击‘检验DES’按钮检验DES算法正确性，即检验加解密后明文是否相同，点击'检验RSA'按钮可检验RSA算法正确性</li></dd>
+                        </ul>
+                        </p></li>
+                    <li><p>
+                        <h4><dt>注意事项</dt></h4>
+                        <ul>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp所有输入字符串均为01字符串，密钥及初始向量应为64位</li></dd>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp对于长度不是64位的明文串，会自动在最后填0将长度补至64的倍数</li></dd>
+                            <dd style="font-family:Microsoft YaHei"><li>&nbsp若使用自行生成的RSA密钥对，请点击'检验密钥对'按钮，保证通过检验</li></dd>
+                        </ul>
+                        </p></li>
+                </ul>
+            </dl>
+
+
+            <div style="height:10px"></div>
+            <div class="panel-group" id="panel-48590">
+                <!-- RSA -->
+                <div class="panel panel-default">
+                    <div style="background-color:#d2e9ff" class="panel-heading" >
+                        <a class="panel-title" href="#panel-element-49010" data-toggle="collapse" data-parent="#panel-48590">密钥加密——RSA</a>
+                    </div>
+                    <div class="panel-collapse collapse" id="panel-element-49010">
+                        <div class="panel-body">
+                            <!-- /. DES -->
+                            <!-- /.panel-heading -->
+                            <div class="panel-body">
+                                <!-- /.col-md-12-->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="clearField">素数P</label>
+                                        <textarea class="form-control" id="P"></textarea>
+                                    </div>
+                                </div>
+                                <!-- /.col-md-12-->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="clearField">素数Q</label>
+                                        <textarea class="form-control" id="Q"></textarea>
+                                    </div>
+                                </div>
+                                <!-- /.col-md-12-->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="clearField">模数n</label>
+                                        <textarea class="form-control" id="n"></textarea>
+                                    </div>
+                                </div>
+                                <!-- /.col-md-12-->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="clearField">公钥e=65537</label>
+                                    </div>
+                                </div>
+                                <!-- /.col-md-12-->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="clearField">密钥d</label>
+                                        <textarea class="form-control" id="d"></textarea>
+                                    </div>
+                                </div>
+                                <!-- /.col-md-12-->
+                                <div class="col-md-12">
+                                    <button class="btn btn-success" rows="2" type="button" onclick="generate_RSAkeys();">生成密钥对</button>
+                                    <button class="btn btn-success" rows="2" type="button" onclick="check_keys();">检验密钥对</button>
+                                </div>
+                                <!-- /.col-md-12-->
+                            </div>
+                            <!-- /.panel body-->
+                        </div>
+                        <!-- end of panel-body-->
+                    </div>
+                    <!-- end of panel-collapse-->
+                </div>
+                <!-- end of panel-default -->
+
+                <div style="height:5px"></div>
+                <!-- sender A -->
+                <div class="panel panel-success">
+                    <div style="background-color:#d2e9ff" class="panel-heading" >
+                        <a class="panel-title" href="#panel-element-49020" data-toggle="collapse" data-parent="#panel-48590">传输文本加密 —— DES</a>
+                    </div>
+                    <div class="panel-collapse collapse" id="panel-element-49020">
+                        <div class="panel-body">
+                            <!-- /. DES -->
+                                    <!-- /.panel-heading -->
+                                    <div class="panel-body">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <form class="form-horizontal" role="form" >
+                                                    <label for="clearField">明文:数据内容</label>
+                                                    <input id="clearfile" type="file" style="display:none">
+                                                    <div class="input-append">
+                                                        <input id="photoCover-m" type="text" style="height:30px;">
+                                                        <a class="btn btn-success" onclick="$('input[id=clearfile]').click();">浏览</a>
+                                                    </div>
+                                                </form>
+                                                <div style="height:5px"></div>
+                                                <textarea class="form-control" id="en_plaintext"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- /.col-md-12-->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="clearField">密钥</label>
+                                                <textarea class="form-control" id="en_key"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- /.col-md-6-->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="clearField">密钥（RSA加密后）</label>
+                                                <textarea class="form-control" id="en_cikey"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- /.col-md-6-->
+                                        <div class="col-md-12">
+                                            <button class="btn btn-success" rows="2" type="button" onclick="en_RSA();">RSA加密</button>
+                                        </div>
+                                        <div>&nbsp;</div>
+                                        <!-- /.col-md-12-->
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="clearField">初始向量IV</label>
+                                                <textarea class="form-control" id="en_IV"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- /.col-md-12-->
+                                        <div class="col-md-12">
+                                            <button class="btn btn-success" rows="2" type="button" onclick="show_cipher();">DES加密</button>
+                                            <a class="btn btn-success" id="test"  href="#" onclick="clickDownloadcipher(this)" download="cipherfile.txt" >下载密文文本</a>
+                                        </div>
+                                        <div>&nbsp;</div>
+                                        <!-- /.col-md-12-->
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="clearField">密文:加密结果</label>
+                                                <textarea class="form-control" id="en_ciphertext"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- /.col-md-12-->
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="clearField">初始向量IV:加密结果</label>
+                                                <textarea class="form-control" id="en_after_IV"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- /.col-md-12-->
+                                    </div>
+                                    <!-- /.panel body-->
+                        </div>
+                        <!-- end of panel-body-->
+                    </div>
+                    <!-- end of panel-collapse-->
+                </div>
+                <!-- end of panel-default -->
+
+                <div style="height:5px"></div>
+
+                <!-- Receiver B -->
+                <div class="panel panel-success">
+                    <div style="background-color:#d2e9ff" class="panel-heading">
+                        <a class="panel-title collapsed" href="#panel-element-253081" data-toggle="collapse" data-parent="#panel-48590">传输文本解密 —— DES</a>
+                    </div>
+                    <div class="panel-collapse collapse" id="panel-element-253081">
+                        <div class="panel-body">
+                            <!-- /. DES -->
+                                    <div class="panel-body">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <form class="form-horizontal" role="form" >
+                                                    <label for="cipherField">密文:数据加密内容</label>
+                                                    <input id="cipherfile" type="file" style="display:none">
+                                                    <div class="input-append">
+                                                        <input id="photoCover-c" type="text" style="height:30px;">
+                                                        <a class="btn btn-success" onclick="$('input[id=cipherfile]').click();">浏览</a>
+                                                    </div>
+                                                </form>
+                                                <div style="height:5px"></div>
+                                                <textarea class="form-control" id="de_ciphertext"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- /.col-md-12-->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="clearField">密钥（RSA解密前）</label>
+                                                <textarea class="form-control" id="de_cikey"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="clearField">密钥</label>
+                                                <textarea class="form-control" id="de_key"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- /.col-md-6-->
+
+                                        <div class="col-md-12">
+                                            <button class="btn btn-success" rows="2" type="button" onclick="de_RSA();">RSA解密</button>
+                                            <button class="btn btn-success" rows="2" type="button" onclick="checkRSA();">检验RSA</button>
+                                        </div>
+                                        <div>&nbsp;</div>
+
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="clearField">初始向量IV:加密结果</label>
+                                                <textarea class="form-control" id="de_after_IV"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- /.col-md-12-->
+
+                                        <div class="col-md-12">
+                                            <button class="btn btn-success" rows="2" type="button" onclick="show_decipher();">DES解密</button>
+                                            <button class="btn btn-success" rows="2" type="button" onclick="checkDES();">检验DES</button>
+                                            <a class="btn btn-success" id="test"  href="#" onclick="clickDownloadclear(this)" download="plaintext.txt" >下载明文文本</a>
+                                        </div>
+                                        <div>&nbsp;</div>
+                                        <!-- /.col-md-12-->
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="clearField">明文:解密结果</label>
+                                                <div style="height:5px"></div>
+                                                <textarea class="form-control" id="de_plaintext"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- /.col-md-12-->
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="clearField">初始向量IV:解密结果</label>
+                                                <div style="height:5px"></div>
+                                                <textarea class="form-control" id="de_IV"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- /.col-md-12-->
+                                    </div>
+                                    <!-- /.panel body-->
+                        </div>
+                        <!-- end of panel-body-->
+                    </div>
+                    <!-- end of panel-collapse-->
+                </div>
+                <!-- end of panel-default -->
+
+            </div>
+            <!-- end of panel-group -->
+            <script>
+                window.onload=function(){
+                    var mf=document.getElementById("clearfile");
+                    var cf=document.getElementById("cipherfile");
+                    mf.onchange=function(){
+                        var f1=new FileReader;
+                        f1.onload=function(){
+                            var x=document.getElementById("en_plaintext");
+                            x.value=this.result;
+                        };
+                        f1.readAsBinaryString(mf.files[0]);
+                    };
+                    cf.onchange=function(){
+                        var f3=new FileReader;
+                        f3.onload=function(){
+                            var x=document.getElementById("de_ciphertext");
+                            x.value=this.result;
+                        };
+                        f3.readAsBinaryString(cf.files[0]);
+                    };
+                };
+                function clickDownloadcipher(aLink) {
+                    str =  document.getElementById("en_ciphertext").value;
+                    aLink.href = "data:text/txt;charset=utf-8,"+str;
+                }
+
+                function clickDownloadclear(aLink) {
+                    str =  document.getElementById("de_plaintext").value;
+                    aLink.href = "data:text/txt;charset=utf-8,"+str;
+                }
+            </script>
+            <script type="text/javascript">
+                $('input[id=clearfile]').change(function() {
+                    $('#photoCover-m').val($(this).val());
+                });
+                $('input[id=cipherfile]').change(function() {
+                    $('#photoCover-c').val($(this).val());
+                });
+                function checkDES(){
+                    var x = document.getElementById("en_plaintext").value;
+                    x = x.replace(/[\r\n]|\ +/g,"");
+                    if (!check(x, '加密前明文')) return;
+                    var y = document.getElementById("de_plaintext").value;
+                    if (!check(y, '解密后明文')) return;
+                    y = y.replace(/[\r\n]|\ +/g,"");
+                    if (x == "")
+                        alert("加密过程明文不能为空！");
+                    else if (y == "")
+                        alert("解密后明文不能为空！");
+                    else if(x == y)
+                        alert("DES算法正确!");
+                    else
+                        alert("DES算法不正确!");
+                }
+                function show_cipher() {
+                    var plaintext = document.getElementById("en_plaintext").value;
+                    plaintext = plaintext.replace(/[\r\n]|\ +/g,"");
+                    if (check(plaintext, '明文')) plaintext = toarray(plaintext);
+                    else return;
+                    var key = document.getElementById("en_key").value;
+                    key = key.replace(/[\r\n]|\ +/g,"");
+                    if (check(key, '密钥', true)) key = toarray(key);
+                    else return;
+                    var IV = document.getElementById("en_IV").value;
+                    IV = IV.replace(/[\r\n]|\ +/g,"");
+                    if (check(IV, '初始向量IV', true)) IV = toarray(IV);
+                    else return;
+
+                    for (; plaintext.length%64 != 0;) plaintext.push(0);
+                    keys = key_generator(key);
+                    var ciphertext = CBC(plaintext, IV, keys).join('');
+                    var cipher_IV = DES(IV, keys).join('');
+
+                    document.getElementById("en_ciphertext").value = ciphertext;
+                    document.getElementById("en_after_IV").value = cipher_IV;
+                }
+                function show_decipher() {
+                    var ciphertext = document.getElementById("de_ciphertext").value;
+                    ciphertext = ciphertext.replace(/[\r\n]|\ +/g,"");
+                    if (check(ciphertext, '密文')) ciphertext = toarray(ciphertext);
+                    else return;
+                    var key = document.getElementById("de_key").value;
+                    key = key.replace(/[\r\n]|\ +/g,"");
+                    if (check(key, '密钥', true)) key = toarray(key);
+                    else return;
+                    var IV = document.getElementById("de_after_IV").value;
+                    IV = IV.replace(/[\r\n]|\ +/g,"");
+                    if (check(IV, '初始向量IV', true)) IV = toarray(IV);
+                    else return;
+
+                    keys = key_generator(key).reverse();
+                    var de_IV = DES(IV, keys).join('');
+                    var plaintext = CBC(ciphertext, de_IV, keys, true).join('');
+
+
+                    document.getElementById("de_plaintext").value = plaintext;
+                    document.getElementById("de_IV").value = de_IV;
+                }
+            </script>
+            <script>
+                function generate_RSAkeys() {
+                    keys = generate_PQ(128);
+                    while (keys === false) {
+                        keys = generate_PQ(128);
+                    }
+                    document.getElementById("P").value = biToString(keys[0], 2);
+                    document.getElementById("Q").value = biToString(keys[1], 2);
+                    document.getElementById("n").value = biToString(keys[2], 2);
+                    document.getElementById("d").value = biToString(keys[3], 2);
+                }
+                function check_RSA() {
+                    var n = document.getElementById("n").value;
+                    n = n.replace(/[\r\n]|\ +/g,"");
+                    if (!check(n, 'n', false)) return false;
+                    if (n.length != 128) {
+                        alert("n长度应为128！");
+                        return false;
+                    }
+                    n = biFromString(n,2);
+                    var P = document.getElementById("P").value;
+                    P = P.replace(/[\r\n]|\ +/g,"");
+                    if (!check(P, 'P', false)) return false;
+                    P = biFromString(P, 2);
+                    var Q = document.getElementById("Q").value;
+                    Q = Q.replace(/[\r\n]|\ +/g,"");
+                    if (!check(Q, 'Q', false)) return false;
+                    Q = biFromString(Q, 2);
+                    var d = document.getElementById("d").value;
+                    d = d.replace(/[\r\n]|\ +/g,"");
+                    if (!check(d, 'd', false)) return false;
+                    d = biFromString(d, 2);
+                    if (!is_prime(P)) {
+                        alert("P应为素数！");
+                        return false;
+                    }
+                    if (!is_prime(Q)) {
+                        alert("Q应为素数！");
+                        return false;
+                    }
+                    if (biCompare(biMultiply(P, Q), n) != 0) {
+                        alert("n应等于P×Q！");
+                        return false;
+                    }
+                    var m = biMultiply(biSubtract(P, bigOne), biSubtract(Q, bigOne));
+                    if (biCompare(biMultiplyMod(d, e, m), bigOne) != 0) {
+                        alert("d×e模(P-1)(Q-1)应等于1！");
+                        return false;
+                    }
+                    return true;
+                }
+                function checkRSA(){
+                    var x = document.getElementById("en_key").value;
+                    x = x.replace(/[\r\n]|\ +/g,"");
+                    if (!check(x, '加密前密钥')) return;
+                    var y = document.getElementById("de_key").value;
+                    if (!check(y, '解密后密钥')) return;
+                    y = y.replace(/[\r\n]|\ +/g,"");
+                    if (x == "")
+                        alert("加密前密钥不能为空！");
+                    else if (y == "")
+                        alert("解密后密钥不能为空！");
+                    else if(x == y)
+                        alert("RSA算法正确!");
+                    else
+                        alert("RSA算法不正确!");
+                }
+                function check_keys() {
+                    if (check_RSA()) alert("RSA密钥正确！");
+                }
+                function en_RSA() {
+                    if (!check_RSA()) return;
+                    var plaintext = document.getElementById("en_key").value;
+                    plaintext = plaintext.replace(/[\r\n]|\ +/g,"");
+                    if (!check(plaintext, '密钥', true)) return;
+                    plaintext = biFromString(plaintext, 2);
+                    var n = biFromString(document.getElementById("n").value, 2);
+                    var ciphertext = encrypt(plaintext, n);
+                    document.getElementById("en_cikey").value = biToString(ciphertext, 2);
+                }
+                function repeat(src, n) {
+                    if (n < 0) return "";
+                    return (new Array(n + 1)).join(src);
+                }
+                function de_RSA() {
+                    if (!check_RSA()) return;
+                    var ciphertext = document.getElementById("de_cikey").value;
+                    ciphertext = ciphertext.replace(/[\r\n]|\ +/g,"");
+                    if (!check(ciphertext, '密钥（解密前）')) return;
+                    ciphertext = biFromString(ciphertext, 2);
+                    var n = biFromString(document.getElementById("n").value, 2);
+                    var P = biFromString(document.getElementById("P").value, 2);
+                    var Q = biFromString(document.getElementById("Q").value, 2);
+                    var d = biFromString(document.getElementById("d").value, 2);
+                    var plaintext = biToString(decrypt(ciphertext, d, P, Q, n), 2);
+                    plaintext = repeat("0", 64 - plaintext.length) + plaintext;
+                    document.getElementById("de_key").value = plaintext;
+                }
+            </script>
+
+
+            <h3><u>DES算法思路</u></h3>
+            <p>将明文分组，每组64比特使用DES算法加密，之后通过CBC模式进行分组加密，实现明文在组间的扩散。为表示方便，统一规定最左侧为第0位。</p>
+            <dl>
+                <ul>
+                    <li><h4><b>密钥生成</b></h4>
+                        <p>DES算法的密钥生成输入为64位主密钥，其中有8位作为奇偶校验位，输出为16个48位子密钥。</p>
+                        <div align="center">
+                            <img src="asset/DES_KiGenerate.png" width="50%" alt="DES算法子密钥的生成算法">
+                            <p align="center">DES算法子密钥的生成算法</p>
+                        </div>
+                        <ol>
+                            <li>
+                                <p class="formula">首先将输入的64比特密钥分成8组，每组8位，其中每组最后一位是作为奇偶校验位，即64比特密钥中的第8,16,24,32,40,48,56,64位是奇偶校验位，有效密钥位实际只有56位，对这56位进行坐标置换，其变换矩阵为\(IPC\)：
+                                    $$
+                                    \begin{pmatrix}
+                                    56	&48	&40	&32	&24	&16	& 8	& 0	&57	&49	&41	&33	&25	&17	& 9	& 1 \\
+                                    58	&50	&42	&34	&26	&18	&10	& 2	&59	&51	&43	&35	&62	&54	&46	&38 \\
+                                    30	&22	&14	&6	&61	&53	&45	&37	&29	&21	&13	&5	&60	&52	&44	&36 \\
+                                    28	&20	&12	&4	&27	&19	&11	&3 \\
+                                    \end{pmatrix}
+                                    $$
+                                <b>注：</b>此处虽为表示方便写成矩阵形式，但其本质为置换，即置换后第\(i\)个元素对应原序列的第\(IPC[i]\)个元素。
+                                </p>
+                            </li>
+                            <li>
+                                <p class="formula">
+                                    将输出的56比特按高28比特、低28比特分成两个28比特的序列\(C_0\)和\(D_0\)， 即：
+                                    $$
+                                        (C_0，D_0）＝IPC(KEY)
+                                    $$
+                                </p>
+                            </li>
+                            <li>
+                                <p class="formula">
+                                    将\(C_i\)和\(D_i\)分别循环左移，位数由矩阵\(LS\)决定：
+                                    $$
+                                    \begin{pmatrix}
+                                    1	 &1	 &2	 &2	 &2	 &2	 &2	 &2	&1	 &2	 &2	 &2	 &2	 &2	 &2	 &1 \\
+                                    \end{pmatrix}
+                                    $$
+                                </p>
+                            </li>
+                            <li>
+                                <p class="formula">
+                                    将循环左移的结果再次合并成一个56比特的矩阵作为下标置换\(PC\)的输入，其输出即为相应的子密钥。
+                                    $$
+                                    \begin{pmatrix}
+                                    13	&16	&10	&23	 &0	 &4	 &2	&27	&14	& 5	&20	& 9	&22	&18	&11	& 3 \\
+                                    25	 &7	&15	 &6	&26	&19	&12	 &1	&40	&51	&30	&36	&46	&54	&29	&39 \\
+                                    50	&44	&32	&47	&43	&48	&38	&55	&33	&52	&45	&41	&49	&35	&28	&31 \\
+                                    \end{pmatrix}
+                                    $$
+                                </p>
+                            </li>
+                        </ol>
+                    </li>
+                    <li><h4><b>加密方法</b></h4>
+                        <p>DES算法主要包括：初始置换\(IP\)、16轮迭代的乘积变换、逆初始变换\(IP^{-1}\)</p>
+                        <div align="center">
+                            <img src="asset/DES_main.jpg" alt="DES算法主流程">
+                            <p align="center">DES算法主流程</p>
+                        </div>
+                        <ol>
+                            <li>
+                                <p>
+                                    首先将输入的64比特作一下标置换变换，其变换矩阵\(IP\)为：
+                                    $$
+                                    \begin{pmatrix}
+                                    &57	&49	&41	&33	&25	&17	 &9	 &1	&59	&51	&43	&35	&27	&19	&11	 &3\\
+                                    &61	&53	&45	&37	&29	&21	&13	 &5	&63	&55	&47	&39	&31	&23	&15	 &7\\
+                                    &56	&48	&40	&32	&24	&16	 &8	 &0	&58	&50	&42	&34	&26	&18	&10	 &2\\
+                                    &60	&52	&44	&36	&28	&20	&12	 &4	&62	&54	&46	&38	&30	&22	&14	 &6\\
+                                    \end{pmatrix}
+                                    $$
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    将输出的64比特按高32比特、低32比特分成两个32比特的矩阵，即：
+                                    $$
+                                        (L_0，R_0)＝IP(I)
+                                    $$
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    进行16次迭代，规则如下：
+                                    \begin{equation}\begin{split}
+                                        &L_i=R_{i-1} \\
+                                        &R_i=L_{i-1}\oplus f(R_{i-1},K_{i-1})
+                                    \end{split}\end{equation}
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    将经过16此迭代的数据再进行一次下标置换变换，其变换矩阵\(IP^{-1}\)为：
+                                    $$
+                                    \begin{pmatrix}
+                                    39&	 7&	47&	15&	55&	23&	63&	31&	38&	 6&	46&	14&	54&	22&	62&	30 \\
+                                    37&	 5&	45&	13&	53&	21&	61&	29&	36&	 4&	44&	12&	52&	20&	60&	28 \\
+                                    35&	 3&	43&	11&	51&	19&	59&	27&	34&	 2&	42&	10&	50&	18&	58&	26 \\
+                                    33&	 1&	41&	 9&	49&	17&	57&	25&	32&	 0&	40&	 8&	48&	16&	56&	24 \\
+                                    \end{pmatrix}
+                                    $$
+                                </p>
+                            </li>
+                        </ol>
+                        <h4><b>轮函数f的构造</b></h4>
+                        <ol>
+                            <li>
+                                <p>首先进行选择扩展运算，将输入的32比特作下标置换变换，得到一个48比特的矩阵，其变换矩阵\(E\)为：
+                                    $$
+                                    \begin{pmatrix}
+                                    31&	 0&	 1&	 2&	 3&	 4&	 3&	 4&	5&	6& 7&	 8&	 7&	 8&	 9&	10\\
+                                    11&	12&	11&	12&	13&	14&	15&	16&	15&	16&	17&	18&	19&	20&	19&	20\\
+                                    21&	22&	23&	24&	23&	24&	25&	26&	27&	28&	27&	28&	29&	30&	31&	 0\\
+                                    \end{pmatrix}
+                                    $$
+                                </p>
+                            </li>
+                            <li>
+                                <p>然后,将得到的48比特数据和相应的子密钥进行异或运算。
+                                </p>
+                            </li>
+                            <li>
+                                <p>把运算后得到的48比特分成八个6比特的矩阵进行选择压缩变换——即S盒变换，其八个S盒如下所示：
+                                    \begin{equation}\begin{split}
+                                    &S_0=
+                                    \begin{pmatrix}
+                                    14&	 4	&13&	 1&	 2&	15&	11&	 8&	3&	10&	 6&	12&	 5&	 9&	 0&	 7\\
+                                    0	&15	 &7	& 4&	14&	 2&	13&	 1&	10&	 6&	12&	11&	 9&	 5&	 3&	 8\\
+                                    4	 &1	&14	 &8&	13&	 6&	 2&	11&	15&	12&	 9&	 7&	 3&	10&	 5&	 0\\
+                                    15	&12&	 8&	 2&	 4&	 9&	 1&	 7&	5&	11&	 3&	14&	10&	 0&	 6&	13\\
+                                    \end{pmatrix}\\
+                                    &S_1=\begin{pmatrix}
+                                    15&	 1&	 8&	14&	 6&	11&	 3&	 4&	9&	 7&	 2&	13&	12&	 0&	 5&	10\\
+                                    3&	13&	 4&	 7&	15&	 2&	 8&	14&	12&	 0&	 1&	10&	 6&	 9&	11&	 5\\
+                                    0&	14&	 7&	11&	10&	 4&	13&	 1&	5&	 8&	12&	 6&	 9&	 3&	 2&	15\\
+                                    13&	 8&	10&	 1&	 3&	15&	 4&	 2&	11&	 6&	 7&	12&	 0&	 5&	14&	 9\\
+                                    \end{pmatrix}\\
+                                    &S_2=\begin{pmatrix}
+                                    10&	 0&	 9&	14&	 6&	 3&	15&	 5&	1&	13&	12&	 7&	11&	 4&	 2&	 8\\
+                                    13&	 7&	 0&	 9&	 3&	 4&	 6&	10&	2&	 8&	 5&	14&	12&	11&	15&	 1\\
+                                    13&	 6&	 4&	 9&	 8&	15&	 3&	 0&	11&	 1&	 2&	12&	 5&	10&	14&	 7\\
+                                    1&	10&	13&	 0&	 6&	 9&	 8&	 7&	4&	15&	14&	 3&	11&	 5&	 2&	12\\
+                                    \end{pmatrix}\\
+                                    &S_3=\begin{pmatrix}
+                                    7&	13&	14&	 3&	 0&	 6&	 9&	10&	1&	 2&	 8&	 5&	11&	12&	 4&	15\\
+                                    13&	 8&	11&	 5&	 6&	15&	 0&	 3&	4&	 7&	 2&	12&	 1&	10&	14&	 9\\
+                                    10&	 6&	 9&	 0&	12&	11&	 7&	13&	15&	 1&	 3&	14&	 5&	 2&	 8&	 4\\
+                                    3&	15&	 0&	 6&	10&	 1&	13&	 8&	9&	 4&	 5&	11&	12&	 7&	 2&	14\\
+                                    \end{pmatrix}\\
+                                    &S_4=\begin{pmatrix}
+                                    2&	12&	 4&	 1&	 7&	10&	11&	 6&	8&	 5&	 3&	15&	13&	 0&	14&	 9\\
+                                    14&	11&	 2&	12&	 4&	 7&	13&	 1&	5&	 0&	15&	10&	 3&	 9&	 8&	 6\\
+                                    4&	 2&	 1&	11&	10&	13&	 7&	 8&	15&	 9&	12&	 5&	 6&	 3&	 0&	14\\
+                                    11&	 8&	12&	 7&	 1&	14&	 2&	13&	6&	15&	 0&	 9&	10&	 4&	 5&	 3\\
+                                    \end{pmatrix}\\
+                                    &S_5=\begin{pmatrix}
+                                    12&	 1&	10&	15&	 9&	 2&	 6&	 8&	0&	13&	 3&	 4&	14&	 7&	 5&	11\\
+                                    10&	15&	 4&	 2&	 7&	12&	 9&	 5&	6&	 1&	13&	14&	 0&	11&	 3&	 8\\
+                                    9&	14&	15&	 5&	 2&	 8&	12&	 3&	7&	 0&	 4&	10&	 1&	13&	11&	 6\\
+                                    4&	 3&	 2&	12&	 9&	 5&	15&	10&	11&	14&	 1&	 7&	 6&	 0&	 8&	13\\
+                                    \end{pmatrix}\\
+                                    &S_6=\begin{pmatrix}
+                                    4&	11&	 2&	14&	15&	 0&	 8&	13&	3&	12&	 9&	 7&	 5&	10&	 6&	 1\\
+                                    13&	 0&	11&	 7&	 4&	 9&	 1&	10&	14&	 3&	 5&	12&	 2&	15&	 8&	 6\\
+                                    1&	 4&	11&	13&	12&	 3&	 7&	14&	10&	15&	 6&	 8&	 0&	 5&	 9&	 2\\
+                                    6&	11&	13&	 8&	 1&	 4&	10&	 7&	9&	 5&	 0&	15&	14&	 2&	 3&	12\\
+                                    \end{pmatrix}\\
+                                    &S_7=\begin{pmatrix}
+                                    13&	 2&	 8&	 4&	 6&	15&	11&	 1&	10&	 9&	 3&	14&	 5&	 0&	12&	 7\\
+                                    1	&15&	13&	 8&	10&	 3&	 7&	 4&	12&	 5&	 6&	11&	 0&	14&	 9&	 2\\
+                                    7	&11&	 4&	 1&	 9&	12&	14&	 2&	0&	 6&	10&	13&	15&	 3&	 5&	 8\\
+                                    2	 &1&	14&	 7&	 4&	10&	 8&	13& 	15&	12&	 9&	 0&	 3&	 5&	 6&	11\\
+                                    \end{pmatrix}\\
+                                    \end{split}\end{equation}
+                                </p>
+                                <b>S盒的运算方式：</b>对于数\((x_0x_1x_2x_3x_4x_5)\)，查找S盒第\((x_0x_5)\)行和第\((x_1x_2x_3x_4)\)列的十进制数，转换为4位二进制数。
+                            </li>
+                            <li>
+                                <p>在完成S盒的操作后，再把S盒的输出重新组合成一个32比特的矩阵，并进行一次坐标置换，置换\(P\)为：
+                                    $$
+                                        \begin{pmatrix}
+                                        15&	 6	&19&	20&	28&	11&	27&	16&	0&	14&	22&	25&	 4&	17&	30&	 9\\
+                                        1	& 7&	23&	13&	31&	26&	 2&	 8&	18&	12&	29&	 5&	21&	10&	 3&	24\\
+                                        \end{pmatrix}
+                                    $$
+                                </p>
+                            </li>
+                        </ol>
+                    </li>
+                    <li><h4><b>分组密码CBC模式</b></h4>
+                        <p>每个明文组\(X[i]\)在加密之前先与前一组的密文\(Y[i-1]\)按位模2相加得到\(X'[i]\)后再进行加密。由于第一组明文\(X[1]\)加密时无反馈密文，通常预制一初始向量IV与\(X[1]\)进行按位模2相加，再进行加密运算，而IV则可作为秘密参数(每次通信都可变)，直接使用同一密钥加密后传送给收方。</p>
+                    </li>
+                </ul>
+            </dl>
+
+
+            <h3><u>RSA算法思路</u></h3>
+            <p>这里我们使用RSA算法对DES使用的主密钥进行加密。本算法实现时使用了高精度库BigInt.js。</p>
+            <dl>
+                <ul>
+                    <li><h4><b>加解密方法</b></h4>
+                        <ol>
+                            <li>
+                                <p>首先,由用户随机选择两个大素数\(p\)和\(q\)，并求\(n=pq\)，以及欧拉函数\(\phi(n)=(p-1)(q-1)\)</p>
+                                <p>之后,随机选择整数\(d\)，使得满足\((d, \phi(n))=1\)</p>
+                                <p>最后，从\(p,q,d\)按下式求出整数\(e\): \(ed \equiv 1 \pmod{\phi(n)}\)</p>
+                                <p>随后把\(n\)和\(e\)公开，\(d\)则由用户保存，而其他信息也应保密或毁掉</p>
+                            </li>
+                            <li>
+                                <p>当用户A要向用户B发送明文m时，就利用B的公钥\(n\)和\(e\)加密明文\(m\): \(c = m^e \mod n\)</p>
+                            </li>
+                            <li>
+                                <p>当用户B收到用户A发送来的密文\(c\)时，可通过解密密钥\(d\)来求得明文\(m\): \(m = c^d \mod n\)</p>
+                            </li>
+                        </ol>
+                        <p><b>注：因为对大整数\(n\)进行质因数分解是困难的，所以难以求得\(p\)与\(q\)，因此也难以求得\(e\)在\(\phi(n)\)下的逆元。</b></p>
+                    </li>
+                    <li><h4><b>密钥生成</b></h4>
+                        <ol>
+                            <li>
+                                <p>使用Miller-Rabin算法对奇整数\(n\)进行素性检测。算法如下：</p>
+                                <ol type="i">
+                                    <li>令\(n-1=2^km\)，\(m\)是奇数</li>
+                                    <li>选择随机整数\(a(1\le a < n)\)</li>
+                                    <li>计算\(b=a^m\mod n\)</li>
+                                    <li>如果\(b\equiv 1\mod n\)，则回答\(n\)是素数，并停止工作</li>
+                                    <li><p>令\(i=0,1,...,k-1\):</p>
+                                        <p>若\(b\equiv -1\mod n\)，则回答\(n\)是素数，并停止工作；否则，计算\(b=b^2\mod n\)</p></li>
+                                    <li>回答\(n\)是合数</li>
+                                </ol>
+                                <p>可先使用小素数对\(n\)进行试除，后进行100次Miller-Rabin测试，若均通过，则认为\(n\)是素数</p>
+                            </li>
+                            <li>
+                                <p>随机选择一个整数\(p\)，则\(p\)是素数的概率为\(1/\ln p\)，所以适当长度的若干个随机奇整数中有一个是素数。</p>
+                            </li>
+                        </ol>
+                    </li>
+                    <li><h4><b>加速方法</b></h4>
+                        <p>由于加密时需要求\(m^e\)，虽然可以使用快速幂进行加速，但是仍比较慢，这里可采用一种加速方法。</p>
+                        <ol>
+                            <li>先取一个较小的公钥\(e\)，一般可取\(e=65537\)，注意保证\(e\)与\(\phi(n)\)互质</li>
+                            <li>解密时，分别计算
+                                \begin{equation*}\begin{split}
+                                &c_1\equiv c \pmod{p} \\
+                                &c_2\equiv c \pmod{q} \\
+                                &d_1\equiv d \pmod{p-1}\\
+                                &d_2\equiv d \pmod{q-1}
+                                \end{split}\end{equation*}
+                            </li>
+                            <li>计算
+                                \begin{equation*}\begin{split}
+                                &m_1\equiv c^{d_1} \pmod{p}\\
+                                &m_2\equiv c^{d_2} \pmod{q}
+                                \end{split}\end{equation*}
+                                再由中国剩余定理求出明文\(m\)。
+                            </li>
+                        </ol>
+                    </li>
+                </ul>
+            </dl>
+        </div>
+        <!-- end of col-md-12 column -->
+    </div>
+    <!-- end of row clearfix -->
+</div>
+</body>
+</html>
